@@ -1,0 +1,11 @@
+node_modules
+dist
+*.local
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# full-size originals downloaded from the live store; the site uses public/products/*.webp
+source-photos/
