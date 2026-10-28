@@ -5,7 +5,8 @@ import { GlowCard } from "@/components/ui/glow-card"
 import { EDITIONS, findProduct, type EditionKey } from "@/data/products"
 import { asset, cn, formatPrice } from "@/lib/utils"
 
-const EXAMPLE = findProduct("mid-century-dub-1000")
+// the cheapest plywood lamp, so the first prices a visitor sees are the entry point (client request)
+const EXAMPLE = findProduct("simplex-plywood-800")
 
 const CAN_DIM: readonly EditionKey[] = ["dim", "dimWarm", "smart"]
 const CAN_WARM: readonly EditionKey[] = ["dimWarm", "smart"]
