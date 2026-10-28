@@ -3,11 +3,18 @@ import { Menu, Phone } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/ui/logo"
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet"
-import { CONTACTS, NAV, SOCIALS } from "@/data/site"
+import { CONTACTS, NAV } from "@/data/site"
 import { useRequest } from "@/lib/request-store"
 import { useScrollTo } from "@/lib/smooth-scroll"
 import { cn } from "@/lib/utils"
+
+const loadMobileMenu = () => import("./mobile-menu")
+const MobileMenu = React.lazy(loadMobileMenu)
+
+/** Warms the phone menu chunk while the page is idle. */
+export function preloadMobileMenu(): void {
+  void loadMobileMenu()
+}
 
 const HIDE_AFTER = 520
 /** y (px) where the header samples which section it is floating over */
@@ -52,6 +59,8 @@ function useHeaderState() {
 export function SiteHeader() {
   const { onDark, scrolled, hidden } = useHeaderState()
   const [menuOpen, setMenuOpen] = React.useState(false)
+  // the drawer chunk is fetched on first open and stays mounted for its close animation
+  const [menuMounted, setMenuMounted] = React.useState(false)
   const { count, addedTick, setOpen } = useRequest()
   const scrollTo = useScrollTo()
 
@@ -106,41 +115,20 @@ export function SiteHeader() {
               {count}
             </span>
           </Button>
-          <Button variant={onDark ? "night" : "outline"} size="icon-sm" className="lg:hidden" onClick={() => setMenuOpen(true)} aria-label="Открыть меню">
+          <Button variant={onDark ? "night" : "outline"} size="icon-sm" className="lg:hidden" onClick={() => {
+              setMenuMounted(true)
+              setMenuOpen(true)
+            }} aria-label="Открыть меню">
             <Menu />
           </Button>
         </div>
       </div>
 
-      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent className="bg-night text-on-night">
-          <SheetTitle className="sr-only">Меню</SheetTitle>
-          <SheetDescription className="sr-only">Разделы сайта и контакты</SheetDescription>
-          <div className="flex h-full flex-col px-6 pt-20 pb-8">
-            <ul className="space-y-1">
-              {NAV.map((link, i) => (
-                <li key={link.href} className="animate-in fade-in slide-in-from-right-4 fill-mode-both" style={{ animationDelay: `${80 + i * 50}ms` }}>
-                  <a href={link.href} onClick={go(link.href)} className="block py-2 font-serif text-3xl tracking-[-0.02em] transition hover:text-glow-soft">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-auto space-y-4 border-t border-on-night/10 pt-6">
-              <a href={CONTACTS.phoneHref} className="block font-mono text-lg">
-                {CONTACTS.phoneDisplay}
-              </a>
-              <div className="flex flex-wrap gap-2">
-                {SOCIALS.map((s) => (
-                  <a key={s.id} href={s.href} target="_blank" rel="noopener noreferrer" className="rounded-full border border-on-night/20 px-3 py-1.5 text-xs transition hover:border-glow">
-                    {s.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
+      {menuMounted && (
+        <React.Suspense fallback={null}>
+          <MobileMenu open={menuOpen} onOpenChange={setMenuOpen} onNavigate={go} />
+        </React.Suspense>
+      )}
     </header>
   )
 }

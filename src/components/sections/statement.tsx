@@ -5,7 +5,6 @@ import { asset } from "@/lib/utils"
 const FACTS = [
   { value: "10 лет", label: "делаем мебель для частных и коммерческих интерьеров" },
   { value: "1 команда", label: "от подбора шпона до финальной сборки — на своей базе" },
-  { value: "Borma", label: "премиальное итальянское масло в покрытии светильников" },
 ] as const
 
 export function Statement() {
@@ -39,7 +38,7 @@ export function Statement() {
         </div>
       </div>
 
-      <dl className="mx-auto mt-20 grid max-w-[1440px] gap-px overflow-hidden rounded-lg border bg-border md:mt-28 md:grid-cols-3">
+      <dl className="mx-auto mt-20 grid max-w-[1440px] gap-px overflow-hidden rounded-lg border bg-border md:mt-28 md:grid-cols-2">
         {FACTS.map((f) => (
           <div key={f.value} className="bg-background p-7 md:p-9">
             <dt className="font-serif text-4xl tracking-[-0.03em] md:text-5xl">{f.value}</dt>

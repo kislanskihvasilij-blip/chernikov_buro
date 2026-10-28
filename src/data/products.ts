@@ -114,6 +114,12 @@ export function findProduct(slug: string): Product | undefined {
   return BY_SLUG.get(slug)
 }
 
+/**
+ * Where to anchor product photos in square frames: square shots fit untouched, and the portrait
+ * lamp shots lose empty wall at the bottom rather than the ceiling canopy at the top.
+ */
+export const PHOTO_FOCUS = "50% 30%"
+
 export function productImage(slug: string, index: 1 | 2, size: "sm" | "lg" = "sm"): string {
   return asset(`products/${slug}-${index}${size === "sm" ? "-sm" : ""}.webp`)
 }

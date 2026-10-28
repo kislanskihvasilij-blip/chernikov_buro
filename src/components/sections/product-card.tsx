@@ -3,7 +3,7 @@ import { Check, Plus } from "lucide-react"
 
 import { GlowCard } from "@/components/ui/glow-card"
 import { PhotoReveal } from "@/components/ui/photo-reveal"
-import { defaultEdition, productImage, startPrice, type Product } from "@/data/products"
+import { PHOTO_FOCUS, defaultEdition, productImage, startPrice, type Product } from "@/data/products"
 import { useRequest } from "@/lib/request-store"
 import { cn, formatPrice } from "@/lib/utils"
 import { useOpenProduct } from "./product-dialog"
@@ -41,7 +41,8 @@ export function ProductCard({ product, index }: ProductCardProps) {
           alt={product.title}
           rotate={tilt}
           delay={(index % 4) * 90}
-          className="aspect-[4/5] rounded-lg"
+          position={PHOTO_FOCUS}
+          className="aspect-square rounded-lg"
           imgClassName="transition-transform duration-700 ease-out group-hover:scale-[1.03]"
         >
           <div className="pointer-events-none absolute top-3 right-14 left-3 flex flex-wrap gap-1.5">

@@ -91,7 +91,7 @@ export function Hero() {
           <RevealWords
             as="h1"
             trigger="mount"
-            delay={1600}
+            delay={700}
             stagger={70}
             className="text-[clamp(44px,7.4vw,112px)] leading-[0.95] font-medium tracking-[-0.045em]"
             segments={[
@@ -101,7 +101,7 @@ export function Hero() {
           />
           <RevealWords
             trigger="mount"
-            delay={2200}
+            delay={1100}
             stagger={18}
             className="mt-7 max-w-xl text-[clamp(15px,1.25vw,18px)] leading-relaxed text-on-night/85"
             segments={[

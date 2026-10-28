@@ -191,8 +191,9 @@ export function GlowField({ rootRef, lamp, lampOn = false, leak = 1, className }
     const uMouse = u("uMouse"), uMouseOn = u("uMouseOn"), uLeak = u("uLeak")
 
     const reduced = prefersReducedMotion()
-    // the glow is soft, so it renders well below device resolution
-    const scale = Math.min(window.devicePixelRatio || 1, 1.5) * 0.6
+    // the glow is soft and slow: half resolution at 30 fps looks the same and costs half as much
+    const scale = Math.min(window.devicePixelRatio || 1, 1.5) * 0.5
+    const FRAME_MS = 1000 / 30
     let cssW = 1
     let cssH = 1
     let bar: [number, number, number, number] = [0, 0, 0, 0]
@@ -243,8 +244,12 @@ export function GlowField({ rootRef, lamp, lampOn = false, leak = 1, className }
 
     let raf = 0
     let visible = true
+    let lastDraw = 0
     const loop = (now: number) => {
-      draw(now)
+      if (now - lastDraw >= FRAME_MS - 2) {
+        lastDraw = now
+        draw(now)
+      }
       raf = requestAnimationFrame(loop)
     }
     const start = () => {

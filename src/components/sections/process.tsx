@@ -1,12 +1,9 @@
 import * as React from "react"
-import gsap from "gsap"
-import { useGSAP } from "@gsap/react"
 import { ArrowUpRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { whatsappHref } from "@/lib/leads"
-
-gsap.registerPlugin(useGSAP)
+import { gsap, useGSAP, useLenisScrollTrigger } from "@/lib/scroll-trigger"
 
 const STEPS = [
   { title: "Выберите модель", text: "В каталоге — или пришлите фото интерьера в WhatsApp: подскажем серию, длину и отделку." },
@@ -25,6 +22,7 @@ const DOT_LIT = {
 
 export function Process() {
   const ref = React.useRef<HTMLElement>(null)
+  useLenisScrollTrigger()
 
   useGSAP(
     () => {
