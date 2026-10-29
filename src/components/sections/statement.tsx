@@ -30,9 +30,9 @@ export function Statement() {
             src={asset("brand/assembly.webp")}
             alt="Мастер бюро собирает светильник"
             rotate={-4}
-            className="mx-auto aspect-[589/641] w-full max-w-[300px] rounded-lg border-[6px] border-card shadow-warm"
+            className="aspect-[589/641] w-full rounded-lg border-[6px] border-card shadow-warm lg:mx-auto lg:max-w-[300px]"
           />
-          <p className="mx-auto mt-4 max-w-[300px] font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
+          <p className="mt-4 font-mono lg:mx-auto lg:max-w-[300px] text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
             Сами проектируем и сами собираем каждый светильник
           </p>
         </div>
