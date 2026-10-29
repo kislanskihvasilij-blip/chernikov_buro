@@ -1,10 +1,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* Manrope + Lora italic only set the hero title; everything else uses Garet, as on черников-бюро.рф */
 @import "@fontsource-variable/manrope";
-@import "@fontsource-variable/lora";
 @import "@fontsource-variable/lora/wght-italic.css";
-@import "@fontsource/ibm-plex-mono/400.css";
-@import "@fontsource/ibm-plex-mono/500.css";
+
+@font-face {
+  font-family: "Garet";
+  src: url("./assets/fonts/Garet-Book.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -97,9 +103,11 @@
   --color-on-night: var(--on-night);
   --color-on-night-muted: var(--on-night-muted);
 
-  --font-sans: "Manrope Variable", "Helvetica Neue", Arial, sans-serif;
-  --font-serif: "Lora Variable", Georgia, serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-sans: "Garet", Arial, sans-serif;
+  --font-serif: "Garet", Arial, sans-serif;
+  --font-mono: "Garet", Arial, sans-serif;
+  --font-display: "Manrope Variable", "Helvetica Neue", Arial, sans-serif;
+  --font-display-serif: "Lora Variable", Georgia, serif;
 
   --radius-sm: calc(var(--radius) - 1px);
   --radius-md: var(--radius);

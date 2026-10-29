@@ -1,9 +1,9 @@
 import * as React from "react"
-import { Menu, Phone } from "lucide-react"
+import { Menu, ShoppingBag } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/ui/logo"
-import { CONTACTS, NAV } from "@/data/site"
+import { NAV } from "@/data/site"
 import { useRequest } from "@/lib/request-store"
 import { useScrollTo } from "@/lib/smooth-scroll"
 import { cn } from "@/lib/utils"
@@ -98,12 +98,9 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <a href={CONTACTS.phoneHref} className="hidden items-center gap-2 px-2 font-mono text-[13px] opacity-80 transition hover:opacity-100 xl:flex">
-            <Phone className="size-3.5" />
-            {CONTACTS.phoneDisplay}
-          </a>
-          <Button variant={onDark ? "night" : "outline"} size="sm" onClick={() => setOpen(true)} aria-label={`Заявка, позиций: ${count}`}>
-            Заявка
+          <Button variant={onDark ? "night" : "outline"} size="sm" onClick={() => setOpen(true)} aria-label={`Корзина, позиций: ${count}`}>
+            <ShoppingBag />
+            <span className="hidden sm:inline">Корзина</span>
             <span
               key={addedTick}
               className={cn(

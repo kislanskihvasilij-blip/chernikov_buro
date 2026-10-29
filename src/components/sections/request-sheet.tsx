@@ -22,7 +22,7 @@ export function RequestSheet() {
     <Sheet open={isOpen} onOpenChange={setOpen}>
       <SheetContent>
         <div className="border-b px-6 pt-6 pb-5">
-          <SheetTitle>Заявка</SheetTitle>
+          <SheetTitle>Корзина</SheetTitle>
           <SheetDescription>Соберите позиции — мы подтвердим цену, сроки и доставку.</SheetDescription>
         </div>
 

@@ -4,6 +4,8 @@ import { fitRect } from "@/lib/fit-rect"
 import { cn, prefersReducedMotion } from "@/lib/utils"
 import { DEFAULT_ENGINE_OPTIONS, LiquidEngine, type EngineOptions } from "./liquid-sculpture/engine"
 
+const SETTLE_DELAY_MS = 1200
+
 interface LiquidSculptureProps {
   /** cut-out image (transparent background) the particles assemble into */
   src: string
@@ -49,7 +51,27 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
 
     let engine: LiquidEngine | null = null
     let cancelled = false
-    const notifyAssembled = () => assembledRef.current?.()
+    // once assembled, the crisp image replaces the particle field so the lamp stays still
+    let settled = false
+    let introDone = false
+    let settleTimer = 0
+    const showImage = (on: boolean) => {
+      canvas.style.opacity = on ? "0" : "1"
+      if (imgRef.current) imgRef.current.style.opacity = on ? "1" : "0"
+    }
+    const settle = () => {
+      if (cancelled || stage.dataset.gl !== "on") return
+      settled = true
+      showImage(true)
+      engine?.setVisible(false)
+    }
+    const notifyAssembled = () => {
+      assembledRef.current?.()
+      introDone = true
+      // the engine reports "done" at ~82% of the assembly; let the last particles land first
+      window.clearTimeout(settleTimer)
+      settleTimer = window.setTimeout(settle, SETTLE_DELAY_MS)
+    }
     const fail = () => {
       stage.dataset.gl = "off"
       canvas.style.opacity = "0"
@@ -62,7 +84,18 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
     } catch {
       fail()
     }
-    if (controlRef) controlRef.current = { replay: () => engine?.replayIntro() }
+    if (controlRef)
+      controlRef.current = {
+        replay: () => {
+          if (!engine || stage.dataset.gl !== "on") return
+          window.clearTimeout(settleTimer)
+          settled = false
+          introDone = false
+          showImage(false)
+          engine.setVisible(!document.hidden)
+          engine.replayIntro()
+        },
+      }
 
     const relayout = () => {
       const rect = fitRect(root, slot, aspect)
@@ -76,10 +109,12 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
     ro.observe(slot)
 
     const io = new IntersectionObserver((entries) => {
-      for (const e of entries) engine?.setVisible(e.isIntersecting && !document.hidden)
+      for (const e of entries) if (!settled) engine?.setVisible(e.isIntersecting && !document.hidden)
     })
     io.observe(root)
-    const onVisibility = () => engine?.setVisible(!document.hidden)
+    const onVisibility = () => {
+      if (!settled) engine?.setVisible(!document.hidden)
+    }
     document.addEventListener("visibilitychange", onVisibility)
 
     const pos = (e: PointerEvent) => {
@@ -87,12 +122,14 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
       return [e.clientX - b.left, e.clientY - b.top] as const
     }
     const onMove = (e: PointerEvent) => {
+      if (settled) return
       const touch = e.pointerType === "touch"
       if (touch && e.buttons === 0 && e.pressure === 0) return
       const [x, y] = pos(e)
       engine?.pointer("move", x, y, touch)
     }
     const onDown = (e: PointerEvent) => {
+      if (settled) return
       const [x, y] = pos(e)
       engine?.pointer("down", x, y, e.pointerType === "touch")
     }
@@ -119,6 +156,8 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
           if (cancelled) return
           stage.dataset.gl = "on"
           canvas.style.opacity = "1"
+          // reduced motion: the intro was skipped before the first frame
+          if (introDone) settleTimer = window.setTimeout(settle, SETTLE_DELAY_MS)
         }
         try {
           relayout()
@@ -133,6 +172,7 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
 
     return () => {
       cancelled = true
+      window.clearTimeout(settleTimer)
       ro.disconnect()
       io.disconnect()
       document.removeEventListener("visibilitychange", onVisibility)

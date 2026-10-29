@@ -159,7 +159,7 @@ function ProductDetails({ product, onAdded }: { product: Product; onAdded: () =>
                 onAdded()
               }}
             >
-              <Plus /> В заявку
+              <Plus /> В корзину
             </Button>
             <Button variant="outline" size="lg" asChild>
               <a href={whatsappHref(askText)} target="_blank" rel="noopener noreferrer">

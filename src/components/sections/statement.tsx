@@ -13,7 +13,7 @@ export function Statement() {
       <div className="mx-auto grid max-w-[1440px] gap-14 lg:grid-cols-12">
         <div className="lg:col-span-9">
           <h2 id="about-title" className="eyebrow mb-10 text-muted-foreground">
-            О бюро
+            О нас
           </h2>
           <RevealWords
             className="text-[clamp(28px,3.6vw,54px)] leading-[1.12] font-medium tracking-[-0.03em]"

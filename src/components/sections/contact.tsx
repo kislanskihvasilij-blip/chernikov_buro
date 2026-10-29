@@ -89,7 +89,7 @@ export function Contact() {
               {count > 0 && (
                 <div className="flex items-center justify-between gap-4 rounded-lg border border-glow/25 bg-glow/[0.06] px-4 py-3 text-sm">
                   <span>
-                    В заявке {count} {count === 1 ? "позиция" : count < 5 ? "позиции" : "позиций"} · <span className="font-mono">{formatPrice(total)}</span>
+                    В корзине {count} {count === 1 ? "позиция" : count < 5 ? "позиции" : "позиций"} · <span className="font-mono">{formatPrice(total)}</span>
                   </span>
                   <button type="button" onClick={() => setOpen(true)} className="cursor-pointer text-glow-soft underline-offset-4 hover:underline">
                     Изменить
@@ -150,7 +150,7 @@ export function Contact() {
               <button type="button" onClick={() => setStatus("idle")} className="mt-6 cursor-pointer text-sm text-on-night/60 underline-offset-4 hover:underline">
                 Вернуться к форме
               </button>
-              {lines.length > 0 && <p className="sr-only">Позиций в заявке: {count}</p>}
+              {lines.length > 0 && <p className="sr-only">Позиций в корзине: {count}</p>}
             </div>
           )}
         </GlowCard>

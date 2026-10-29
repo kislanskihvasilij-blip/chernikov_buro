@@ -9,10 +9,10 @@ import { whatsappHref } from "@/lib/leads"
 import { useScrollTo } from "@/lib/smooth-scroll"
 import { asset, cn } from "@/lib/utils"
 
-/** public/hero/lamp-cutout.webp: Rounded Plywood 800 keyed off its studio photo (1343 × 673) */
+/** public/hero/lamp-cutout.webp: Rounded Plywood 800 cut from its studio photo with a straight-edged mask (1343 × 673) */
 const LAMP_SRC = asset("hero/lamp-cutout.webp")
 const LAMP_ASPECT = 1343 / 673
-const LAMP_BAR: LampBar = { x0: 0.0194, x1: 0.9806, y0: 0.841, y1: 0.9614 }
+const LAMP_BAR: LampBar = { x0: 0.0194, x1: 0.9792, y0: 0.8663, y1: 0.9614 }
 
 const SCULPTURE_OPTIONS = {
   density: 1.25,
@@ -35,13 +35,8 @@ export function Hero() {
   const slotRef = React.useRef<HTMLDivElement>(null)
   const controlRef = React.useRef<{ replay: () => void } | null>(null)
   const [assembled, setAssembled] = React.useState(false)
-  const [isTouch, setIsTouch] = React.useState(false)
   const scrollTo = useScrollTo()
   const handleAssembled = React.useCallback(() => setAssembled(true), [])
-
-  React.useEffect(() => {
-    setIsTouch(window.matchMedia("(hover: none), (pointer: coarse)").matches)
-  }, [])
 
   const replay = () => {
     setAssembled(false)
@@ -93,10 +88,10 @@ export function Hero() {
             trigger="mount"
             delay={700}
             stagger={70}
-            className="text-[clamp(44px,7.4vw,112px)] leading-[0.95] font-medium tracking-[-0.045em]"
+            className="font-display text-[clamp(44px,7.4vw,112px)] leading-[0.95] font-medium tracking-[-0.045em]"
             segments={[
               { text: "Свет, собранный" },
-              { text: "из дерева", breakBefore: true, className: "font-serif font-normal italic tracking-[-0.03em] text-glow" },
+              { text: "из дерева", breakBefore: true, className: "font-display-serif font-normal italic tracking-[-0.03em] text-glow" },
             ]}
           />
           <RevealWords
@@ -133,7 +128,7 @@ export function Hero() {
           </dl>
           <div className="flex items-center justify-center gap-3 font-mono text-[11px] tracking-[0.14em] text-on-night-muted uppercase">
             <span className="size-1.5 animate-[pulse-dot_2.4s_ease-in-out_infinite] rounded-full bg-glow" />
-            {isTouch ? "Коснитесь светильника" : "Проведите курсором по светильнику"}
+            Собран из частиц дерева
             <button
               type="button"
               onClick={replay}

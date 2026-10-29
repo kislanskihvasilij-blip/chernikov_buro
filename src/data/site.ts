@@ -34,7 +34,7 @@ export const NAV: readonly NavLink[] = [
   { label: "Каталог", href: "#catalog" },
   { label: "Интерьеры", href: "#interiors" },
   { label: "Умный свет", href: "#light" },
-  { label: "О бюро", href: "#about" },
+  { label: "О нас", href: "#about" },
   { label: "Как заказать", href: "#process" },
   { label: "Контакты", href: "#contact" },
 ]

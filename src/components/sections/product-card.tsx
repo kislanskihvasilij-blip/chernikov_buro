@@ -67,7 +67,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
             "absolute top-3 right-3 z-[4] grid size-10 cursor-pointer place-items-center rounded-full shadow-md backdrop-blur transition duration-300",
             justAdded ? "bg-ember text-night" : "bg-card/90 text-foreground hover:bg-foreground hover:text-background"
           )}
-          aria-label={`Добавить ${product.title} в заявку`}
+          aria-label={`Добавить ${product.title} в корзину`}
         >
           {justAdded ? <Check className="size-4" /> : <Plus className="size-4" />}
         </button>
