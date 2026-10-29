@@ -5,6 +5,8 @@ import { cn, prefersReducedMotion } from "@/lib/utils"
 import { DEFAULT_ENGINE_OPTIONS, LiquidEngine, type EngineOptions } from "./liquid-sculpture/engine"
 
 const SETTLE_DELAY_MS = 1200
+/** time for disturbed particles to fly home before the still image fades back in */
+const RETURN_DELAY_MS = 1800
 
 interface LiquidSculptureProps {
   /** cut-out image (transparent background) the particles assemble into */
@@ -51,16 +53,18 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
 
     let engine: LiquidEngine | null = null
     let cancelled = false
-    // once assembled, the crisp image replaces the particle field so the lamp stays still
+    // at rest the crisp image replaces the particle field so the lamp stays still
     let settled = false
     let introDone = false
+    // pointer is over the lamp (only tracked after the intro)
+    let near = false
     let settleTimer = 0
     const showImage = (on: boolean) => {
       canvas.style.opacity = on ? "0" : "1"
       if (imgRef.current) imgRef.current.style.opacity = on ? "1" : "0"
     }
     const settle = () => {
-      if (cancelled || stage.dataset.gl !== "on") return
+      if (cancelled || near || stage.dataset.gl !== "on") return
       settled = true
       showImage(true)
       engine?.setVisible(false)
@@ -97,8 +101,10 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
         },
       }
 
+    let lampRect = { x: 0, y: 0, w: 0, h: 0 }
     const relayout = () => {
       const rect = fitRect(root, slot, aspect)
+      lampRect = rect
       const img = imgRef.current
       if (img) Object.assign(img.style, { left: `${rect.x}px`, top: `${rect.y}px`, width: `${rect.w}px`, height: `${rect.h}px` })
       engine?.resize(root.clientWidth, root.clientHeight, rect)
@@ -121,25 +127,53 @@ export function LiquidSculpture({ src, aspect, alt, rootRef, slotRef, options, o
       const b = root.getBoundingClientRect()
       return [e.clientX - b.left, e.clientY - b.top] as const
     }
+    // after the intro the particles only come back while the pointer is near the lamp
+    const isNear = (x: number, y: number) => {
+      const r = lampRect
+      const reach = optionsRef.current?.radius ?? DEFAULT_ENGINE_OPTIONS.radius
+      return x > r.x - reach && x < r.x + r.w + reach && y > r.y - reach && y < r.y + r.h + reach
+    }
+    const wake = () => {
+      window.clearTimeout(settleTimer)
+      if (!settled || !engine) return
+      settled = false
+      showImage(false)
+      engine.setVisible(!document.hidden)
+    }
+    const release = (x: number, y: number, touch: boolean) => {
+      near = false
+      engine?.pointer(touch ? "up" : "leave", x, y, touch)
+      if (!introDone) return
+      window.clearTimeout(settleTimer)
+      settleTimer = window.setTimeout(settle, RETURN_DELAY_MS)
+    }
     const onMove = (e: PointerEvent) => {
-      if (settled) return
       const touch = e.pointerType === "touch"
       if (touch && e.buttons === 0 && e.pressure === 0) return
       const [x, y] = pos(e)
+      if (introDone && !isNear(x, y)) {
+        if (near) release(x, y, false)
+        return
+      }
+      near = true
+      wake()
       engine?.pointer("move", x, y, touch)
     }
     const onDown = (e: PointerEvent) => {
-      if (settled) return
       const [x, y] = pos(e)
+      if (introDone && !isNear(x, y)) return
+      near = true
+      wake()
       engine?.pointer("down", x, y, e.pointerType === "touch")
     }
     const onUp = (e: PointerEvent) => {
       const [x, y] = pos(e)
-      engine?.pointer("up", x, y, e.pointerType === "touch")
+      if (e.pointerType === "touch") release(x, y, true)
+      else engine?.pointer("up", x, y, false)
     }
     const onLeave = (e: PointerEvent) => {
       const [x, y] = pos(e)
-      engine?.pointer("leave", x, y, e.pointerType === "touch")
+      release(x, y, e.pointerType === "touch")
     }
     root.addEventListener("pointermove", onMove, { passive: true })
     root.addEventListener("pointerdown", onDown, { passive: true })

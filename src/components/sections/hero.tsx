@@ -35,8 +35,13 @@ export function Hero() {
   const slotRef = React.useRef<HTMLDivElement>(null)
   const controlRef = React.useRef<{ replay: () => void } | null>(null)
   const [assembled, setAssembled] = React.useState(false)
+  const [isTouch, setIsTouch] = React.useState(false)
   const scrollTo = useScrollTo()
   const handleAssembled = React.useCallback(() => setAssembled(true), [])
+
+  React.useEffect(() => {
+    setIsTouch(window.matchMedia("(hover: none), (pointer: coarse)").matches)
+  }, [])
 
   const replay = () => {
     setAssembled(false)
@@ -128,7 +133,7 @@ export function Hero() {
           </dl>
           <div className="flex items-center justify-center gap-3 font-mono text-[11px] tracking-[0.14em] text-on-night-muted uppercase">
             <span className="size-1.5 animate-[pulse-dot_2.4s_ease-in-out_infinite] rounded-full bg-glow" />
-            Собран из частиц дерева
+            {isTouch ? "Коснитесь светильника" : "Проведите курсором по светильнику"}
             <button
               type="button"
               onClick={replay}
