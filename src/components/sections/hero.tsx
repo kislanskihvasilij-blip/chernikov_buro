@@ -77,7 +77,7 @@ export function Hero() {
 
       <div className="relative z-[2] flex flex-1 flex-col px-5 pt-[calc(var(--header-h)+3svh)] pb-6 md:px-10 md:pb-8">
         {/* the lamp hangs here; the canvas behind draws it */}
-        <div ref={slotRef} aria-hidden="true" className="aspect-[1343/673] max-h-[34svh] w-[150vw] self-center sm:w-[min(1040px,92vw)]" />
+        <div ref={slotRef} aria-hidden="true" className="aspect-[1343/673] max-h-[34svh] w-[min(300px,80vw)] self-center sm:w-[min(1040px,92vw)]" />
 
         <div className="mx-auto mt-[5svh] flex max-w-5xl flex-col items-center text-center">
           <p
