@@ -1,24 +1,25 @@
 import * as React from "react"
-import { ArrowUpRight, Mail, MapPin, Phone, Send } from "lucide-react"
+import { ArrowUpRight, Check, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { GlowCard } from "@/components/ui/glow-card"
 import { GlowField } from "@/components/ui/glow-field"
 import { Input, Textarea } from "@/components/ui/input"
-import { CONTACTS, LEGAL, SOCIALS } from "@/data/site"
-import { buildLeadMessage, isValidPhone, mailtoHref, sendLeadToWhatsapp, whatsappHref, type Lead } from "@/lib/leads"
+import { CONTACTS, LEGAL, MAX_HREF, SOCIALS } from "@/data/site"
+import { buildLeadMessage, isValidPhone, mailtoHref, sendLead, whatsappHref, type Lead } from "@/lib/leads"
 import { useRequest } from "@/lib/request-store"
 import { formatPrice } from "@/lib/utils"
 
-type Status = "idle" | "sent" | "blocked"
+type Status = "idle" | "sending" | "sent" | "failed"
 
 export function Contact() {
   const rootRef = React.useRef<HTMLElement>(null)
-  const { lines, count, total, setOpen, toLeadLines } = useRequest()
+  const { count, total, setOpen, clear, toLeadLines } = useRequest()
   const [name, setName] = React.useState("")
   const [phone, setPhone] = React.useState("")
   const [comment, setComment] = React.useState("")
   const [consent, setConsent] = React.useState(false)
+  const [website, setWebsite] = React.useState("")
   const [touched, setTouched] = React.useState(false)
   const [status, setStatus] = React.useState<Status>("idle")
   const [lastLead, setLastLead] = React.useState<Lead | null>(null)
@@ -30,13 +31,22 @@ export function Contact() {
   }
   const hasErrors = Object.values(errors).some(Boolean)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setTouched(true)
-    if (hasErrors) return
+    if (hasErrors || status === "sending") return
     const lead: Lead = { name, phone, comment, items: toLeadLines() }
     setLastLead(lead)
-    setStatus(sendLeadToWhatsapp(lead) ? "sent" : "blocked")
+    setStatus("sending")
+    const sent = await sendLead(lead, website)
+    setStatus(sent ? "sent" : "failed")
+    if (!sent) return
+    clear()
+    setName("")
+    setPhone("")
+    setComment("")
+    setConsent(false)
+    setTouched(false)
   }
 
   return (
@@ -84,7 +94,7 @@ export function Contact() {
         </div>
 
         <GlowCard className="rounded-2xl border border-on-night/10 bg-night-2/80 p-6 backdrop-blur-md md:p-9">
-          {status === "idle" ? (
+          {status === "idle" || status === "sending" ? (
             <form noValidate onSubmit={handleSubmit} className="space-y-5">
               {count > 0 && (
                 <div className="flex items-center justify-between gap-4 rounded-lg border border-glow/25 bg-glow/[0.06] px-4 py-3 text-sm">
@@ -96,14 +106,16 @@ export function Contact() {
                   </button>
                 </div>
               )}
+              {/* hidden from people; bots fill it in and lead.php then drops the request */}
+              <input type="text" name="website" value={website} onChange={(e) => setWebsite(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] size-px opacity-0" />
               <Field label="Имя" error={touched ? errors.name : null}>
-                <Input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" placeholder="Анна" className="border-on-night/15" aria-invalid={touched && !!errors.name} />
+                <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={100} autoComplete="name" placeholder="Анна" className="border-on-night/15" aria-invalid={touched && !!errors.name} />
               </Field>
               <Field label="Телефон" error={touched ? errors.phone : null}>
                 <Input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" inputMode="tel" autoComplete="tel" placeholder="+7 900 000-00-00" className="border-on-night/15" aria-invalid={touched && !!errors.phone} />
               </Field>
               <Field label="Что ищете (необязательно)">
-                <Textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Например: светильник над обеденным столом 1,8 м" className="border-on-night/15" />
+                <Textarea value={comment} onChange={(e) => setComment(e.target.value)} maxLength={1000} placeholder="Например: светильник над обеденным столом 1,8 м" className="border-on-night/15" />
               </Field>
               <label className="flex cursor-pointer items-start gap-3 text-[13px] leading-relaxed text-on-night/70">
                 <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 size-4 shrink-0 cursor-pointer accent-[var(--ember)]" />
@@ -119,23 +131,27 @@ export function Contact() {
                 </span>
               </label>
               {touched && errors.consent && <p className="text-[13px] text-[#f0a080]">{errors.consent}</p>}
-              <Button type="submit" variant="ember" size="lg" className="w-full">
-                <Send /> Отправить в WhatsApp
+              <Button type="submit" variant="ember" size="lg" className="w-full" disabled={status === "sending"}>
+                <Send /> {status === "sending" ? "Отправляем…" : "Отправить заявку"}
               </Button>
-              <p className="text-center text-xs text-on-night/50">Откроется WhatsApp с готовым сообщением — останется нажать «Отправить».</p>
+              <Button variant="night" size="lg" className="w-full" asChild>
+                <a href={MAX_HREF} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle /> Написать в Макс
+                </a>
+              </Button>
             </form>
           ) : (
             <div className="flex min-h-[420px] flex-col items-center justify-center text-center" role="status">
               <span className="grid size-16 place-items-center rounded-full bg-glow/15 text-glow shadow-[0_0_60px_-10px_rgb(255_160_90/0.8)]">
-                <Send className="size-6" />
+                {status === "sent" ? <Check className="size-6" /> : <Send className="size-6" />}
               </span>
-              <h3 className="mt-6 font-serif text-3xl">{status === "sent" ? "Почти готово" : "Откройте WhatsApp"}</h3>
+              <h3 className="mt-6 font-serif text-3xl">{status === "sent" ? "Заявка отправлена" : "Не удалось отправить"}</h3>
               <p className="mt-3 max-w-sm text-on-night/70">
                 {status === "sent"
-                  ? "Мы открыли WhatsApp с вашей заявкой — отправьте сообщение, и мы свяжемся с вами."
-                  : "Браузер заблокировал новое окно. Откройте чат по кнопке ниже или напишите на почту."}
+                  ? "Спасибо! Мы получили вашу заявку и скоро свяжемся с вами."
+                  : "Заявка не дошла. Отправьте её в мессенджер или на почту — данные уже подставлены."}
               </p>
-              {lastLead && (
+              {status === "failed" && lastLead && (
                 <div className="mt-6 flex flex-wrap justify-center gap-2">
                   <Button variant="ember" asChild>
                     <a href={whatsappHref(buildLeadMessage(lastLead))} target="_blank" rel="noopener noreferrer">
@@ -150,7 +166,6 @@ export function Contact() {
               <button type="button" onClick={() => setStatus("idle")} className="mt-6 cursor-pointer text-sm text-on-night/60 underline-offset-4 hover:underline">
                 Вернуться к форме
               </button>
-              {lines.length > 0 && <p className="sr-only">Позиций в корзине: {count}</p>}
             </div>
           )}
         </GlowCard>

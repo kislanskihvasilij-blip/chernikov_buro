@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { GlowField, type LampBar } from "@/components/ui/glow-field"
 import { LiquidSculpture } from "@/components/ui/liquid-sculpture-hero"
 import { RevealWords } from "@/components/ui/reveal-words"
-import { whatsappHref } from "@/lib/leads"
+import { MAX_HREF } from "@/data/site"
 import { useScrollTo } from "@/lib/smooth-scroll"
 import { asset, cn } from "@/lib/utils"
 
@@ -115,8 +115,8 @@ export function Hero() {
               Выбрать светильник <ArrowRight />
             </Button>
             <Button variant="night" size="lg" asChild>
-              <a href={whatsappHref("Здравствуйте! Помогите подобрать светильник.")} target="_blank" rel="noopener noreferrer">
-                Консультация в WhatsApp
+              <a href={MAX_HREF} target="_blank" rel="noopener noreferrer">
+                Консультация в MAX
               </a>
             </Button>
           </div>

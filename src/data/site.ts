@@ -9,6 +9,8 @@ export const CONTACTS = {
   mapHref: `https://yandex.ru/maps/?text=${encodeURIComponent("Краснодар, улица Зиповская, 5В")}`,
 } as const
 
+export const MAX_HREF = "https://web.max.ru/229909870"
+
 export type SocialId = "telegram" | "whatsapp" | "max" | "vk" | "pinterest"
 
 export interface Social {
@@ -20,7 +22,7 @@ export interface Social {
 export const SOCIALS: readonly Social[] = [
   { id: "whatsapp", label: "WhatsApp", href: "https://wa.me/79615353955" },
   { id: "telegram", label: "Telegram", href: "https://t.me/chernikov_buro" },
-  { id: "max", label: "MAX", href: "https://web.max.ru/229909870" },
+  { id: "max", label: "MAX", href: MAX_HREF },
   { id: "vk", label: "ВКонтакте", href: "https://vk.com/club234231538" },
   { id: "pinterest", label: "Pinterest", href: "https://www.pinterest.com/Chernikov_buro" },
 ]

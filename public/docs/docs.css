@@ -1,0 +1,70 @@
+/* Plain pages moved from the old site: documents, privacy policy, personal data notice */
+@font-face {
+  font-family: "Garet";
+  src: url("./Garet-Book.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f1e6;
+  color: #4a3f35;
+  font: 400 16px/1.65 "Garet", Arial, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+.doc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+.doc-header img {
+  display: block;
+  width: 150px;
+  height: auto;
+}
+
+.doc {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 16px 20px 80px;
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  margin: 0 0 32px;
+  font-size: clamp(30px, 6vw, 44px);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.doc p {
+  margin: 0 0 12px;
+}
+
+.doc div {
+  margin-bottom: 24px;
+}
+
+.doc img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 24px;
+  border-radius: 6px;
+}
+
+a {
+  color: #a67c52;
+}

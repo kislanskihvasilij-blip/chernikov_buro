@@ -1,5 +1,8 @@
 import { CONTACTS } from "@/data/site"
-import { formatPrice } from "@/lib/utils"
+import { asset, formatPrice } from "@/lib/utils"
+
+const LEAD_ENDPOINT = asset("api/lead.php")
+const LEAD_TIMEOUT_MS = 12000
 
 export interface LeadLine {
   title: string
@@ -51,10 +54,21 @@ export function mailtoHref(subject: string, body: string): string {
 }
 
 /**
- * The site is static (no backend), so a lead is delivered by opening the studio's WhatsApp
- * with the message typed in. Returns false when the browser blocked the new tab.
+ * Posts the lead to public/api/lead.php, which e-mails it to the studio. `website` is the hidden
+ * anti-bot field. Resolves to false on any failure so the form can offer another way to reach us.
  */
-export function sendLeadToWhatsapp(lead: Lead): boolean {
-  const opened = window.open(whatsappHref(buildLeadMessage(lead)), "_blank", "noopener,noreferrer")
-  return opened !== null
+export async function sendLead(lead: Lead, website: string): Promise<boolean> {
+  try {
+    const response = await fetch(LEAD_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...lead, consent: true, website }),
+      signal: AbortSignal.timeout(LEAD_TIMEOUT_MS),
+    })
+    if (!response.ok) return false
+    const result: unknown = await response.json()
+    return typeof result === "object" && result !== null && "success" in result && result.success === true
+  } catch {
+    return false
+  }
 }
