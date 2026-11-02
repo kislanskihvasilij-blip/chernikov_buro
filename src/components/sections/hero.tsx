@@ -26,7 +26,6 @@ const SCULPTURE_OPTIONS = {
 
 const FACTS = [
   { value: "10 лет", label: "работаем с деревом" },
-  { value: "от 18 000 ₽", label: "светильники" },
   { value: "Алиса", label: "яркость · теплота" },
 ] as const
 
