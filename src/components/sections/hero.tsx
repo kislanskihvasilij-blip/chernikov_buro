@@ -34,12 +34,16 @@ export function Hero() {
   const slotRef = React.useRef<HTMLDivElement>(null)
   const controlRef = React.useRef<{ replay: () => void } | null>(null)
   const [assembled, setAssembled] = React.useState(false)
+  // the text and buttons enter right away instead of waiting for the particle assembly
+  const [entered, setEntered] = React.useState(false)
   const [isTouch, setIsTouch] = React.useState(false)
   const scrollTo = useScrollTo()
   const handleAssembled = React.useCallback(() => setAssembled(true), [])
 
   React.useEffect(() => {
     setIsTouch(window.matchMedia("(hover: none), (pointer: coarse)").matches)
+    const frame = requestAnimationFrame(() => setEntered(true))
+    return () => cancelAnimationFrame(frame)
   }, [])
 
   const replay = () => {
@@ -82,7 +86,7 @@ export function Hero() {
           <p
             className={cn(
               "eyebrow mb-6 text-on-night/80 transition-all delay-300 duration-1000",
-              assembled ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+              entered ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
             )}
           >
             Столярное бюро · Краснодар
@@ -109,7 +113,7 @@ export function Hero() {
               },
             ]}
           />
-          <div className={cn("mt-9 flex flex-wrap justify-center gap-3 transition-all duration-1000", assembled ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")}>
+          <div className={cn("mt-9 flex flex-wrap justify-center gap-3 transition-all delay-[900ms] duration-700", entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0")}>
             <Button variant="ember" size="lg" onClick={() => scrollTo("#catalog")}>
               Выбрать светильник <ArrowRight />
             </Button>

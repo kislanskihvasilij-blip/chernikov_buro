@@ -9,7 +9,7 @@ export const CONTACTS = {
   mapHref: `https://yandex.ru/maps/?text=${encodeURIComponent("Краснодар, улица Зиповская, 5В")}`,
 } as const
 
-export const MAX_HREF = "https://web.max.ru/229909870"
+export const MAX_HREF = "https://max.ru/u/f9LHodD0cOJ8uFh8PQqXB06_Wssg67Mdzi93M67ssNDt9Q1RtHN72kMBRoA"
 
 export type SocialId = "telegram" | "whatsapp" | "max" | "vk" | "pinterest"
 
