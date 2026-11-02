@@ -54,9 +54,9 @@ export const PARTNERS = [
 ] as const
 
 export const LEGAL = {
-  owner: "ИП Вербицкий А. Ю.",
-  inn: "262704613025",
-  ogrnip: "321265100009545",
+  owner: "ИП Вербицкая И. И.",
+  inn: "262902377718",
+  ogrnip: "324237500196416",
   privacyHref: `${ORIGIN}/privacy_policy`,
   personalDataHref: `${ORIGIN}/page258051709.html`,
 } as const
