@@ -1,0 +1,8 @@
+# Timeweb terminates TLS in front of Apache, so HTTPS is read from X-Forwarded-Proto
+RewriteEngine On
+
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://xn----btbblpmtkdmh8e2e.xn--p1ai%{REQUEST_URI} [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://xn----btbblpmtkdmh8e2e.xn--p1ai%{REQUEST_URI} [R=301,L]
