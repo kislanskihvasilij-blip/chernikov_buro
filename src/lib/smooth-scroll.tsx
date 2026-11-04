@@ -7,6 +7,7 @@ const LenisContext = React.createContext<Lenis | null>(null)
 
 /** How long a link like /#catalog waits for its lazily loaded section before giving up. */
 const HASH_WAIT_MS = 8000
+const HASH_SETTLE_MS = 100
 
 /**
  * Sections below the hero load lazily, so the browser finds nothing to land on for /#catalog.
@@ -22,9 +23,16 @@ function scrollToInitialHash(lenis: Lenis | null): () => void {
       return null
     }
   }
+  // the browser would otherwise put the page back where it was before the reload
+  history.scrollRestoration = "manual"
   const jump = (el: HTMLElement) => {
-    if (lenis) lenis.scrollTo(el, { immediate: true, force: true })
-    else el.scrollIntoView()
+    if (!lenis) {
+      el.scrollIntoView()
+      return
+    }
+    // Lenis measured the page before the sections arrived and would clamp to the old height
+    lenis.resize()
+    lenis.scrollTo(el, { immediate: true, force: true })
   }
   const found = find()
   if (found) {
@@ -35,7 +43,8 @@ function scrollToInitialHash(lenis: Lenis | null): () => void {
     const el = find()
     if (!el) return
     stop()
-    requestAnimationFrame(() => jump(el))
+    // let the rest of the lazily loaded sections commit first, so the measured offset is final
+    window.setTimeout(() => jump(el), HASH_SETTLE_MS)
   })
   const timer = window.setTimeout(() => stop(), HASH_WAIT_MS)
   function stop() {

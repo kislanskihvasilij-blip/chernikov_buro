@@ -17,6 +17,7 @@ const Benefits = React.lazy(() => import("@/components/sections/benefits").then(
 const Process = React.lazy(() => import("@/components/sections/process").then((m) => ({ default: m.Process })))
 const Documents = React.lazy(() => import("@/components/sections/documents").then((m) => ({ default: m.Documents })))
 const Contact = React.lazy(() => import("@/components/sections/contact").then((m) => ({ default: m.Contact })))
+const SeoText = React.lazy(() => import("@/components/sections/seo-text").then((m) => ({ default: m.SeoText })))
 const SiteFooter = React.lazy(() => import("@/components/sections/site-footer").then((m) => ({ default: m.SiteFooter })))
 const loadRequestSheet = () => import("@/components/sections/request-sheet")
 const RequestSheet = React.lazy(() => loadRequestSheet().then((m) => ({ default: m.RequestSheet })))
@@ -71,6 +72,7 @@ export default function App() {
               <Process />
               <Documents />
               <Contact />
+              <SeoText />
             </React.Suspense>
           </main>
           <React.Suspense fallback={null}>
