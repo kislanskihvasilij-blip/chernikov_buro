@@ -6,3 +6,10 @@ RewriteRule ^ https://xn----btbblpmtkdmh8e2e.xn--p1ai%{REQUEST_URI} [R=301,L]
 
 RewriteCond %{HTTP_HOST} ^www\. [NC]
 RewriteRule ^ https://xn----btbblpmtkdmh8e2e.xn--p1ai%{REQUEST_URI} [R=301,L]
+
+# the page must always be fetched fresh: an old copy points at script files that a new upload replaced
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
